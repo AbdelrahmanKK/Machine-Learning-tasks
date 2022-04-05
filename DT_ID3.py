@@ -3,6 +3,8 @@ import numpy as np
 from collections import Counter
 import pandas as pd
 from sklearn.model_selection import train_test_split, cross_val_score, GridSearchCV
+from datetime import datetime as dt
+
 
 data= pd.read_csv("cardio_train.csv",sep=';')
 data.drop("id",axis=1,inplace=True)
@@ -11,7 +13,7 @@ out_filter = ((data["ap_hi"]>250) | (data["ap_lo"]>200))
 data = data[~out_filter]
 out_filter2 = ((data["ap_hi"] < 0) | (data["ap_lo"] < 0))
 data = data[~out_filter2]
-# data=data.loc[:200]
+data=data.loc[:500]
 target_name = 'cardio'
 data_target = data[target_name]
 data = data.drop([target_name], axis=1)
@@ -221,14 +223,27 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 from sklearn.tree import DecisionTreeClassifier
 X_train, X_test, y_train, y_test = train_test_split(data, data_target, test_size=0.2, random_state=0)
+start = dt.now()
 model = DecisionTree()
 model.fit(X_train, y_train)
 preds = model.predict(X_test)
 hope=accuracy_score(y_test, preds)
-print(hope)
+running_secs_fromScratch = (dt.now() - start)
+print(f"my decision tree score :{hope}" )
+print(f"my decision tree took :{running_secs_fromScratch}")
 
+
+start = dt.now()
 sk_model = DecisionTreeClassifier()
 sk_model.fit(X_train, y_train)
 sk_preds = sk_model.predict(X_test)
-print("###############################")
-print(accuracy_score(y_test, sk_preds))
+sklearnScore=accuracy_score(y_test, sk_preds)
+running_secs_sk_model = (dt.now() - start)
+print(f"sklearn's decision tree score : {sklearnScore}")
+print(f"sklearn's decision tree took : {running_secs_sk_model}")
+
+
+
+
+
+
